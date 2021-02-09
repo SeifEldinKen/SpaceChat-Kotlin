@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "232882470748",
+    "project_id": "spacechat-927a4",
+    "storage_bucket": "spacechat-927a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:232882470748:android:6b97877ef0d2232cf5cb99",
+        "android_client_info": {
+          "package_name": "com.example.spacechat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "232882470748-ns7s8tmtkj1oct06v7a2v2qqu1pri1oc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBhFbvc1K8gVT9UFi6_q8Nysh5b2r-r6A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "232882470748-ns7s8tmtkj1oct06v7a2v2qqu1pri1oc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
