@@ -1,8 +1,10 @@
 package com.example.spacechat.userServices
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import com.example.spacechat.model.UserModel
+import com.example.spacechat.ui.activity.MainActivity
 import com.example.spacechat.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,13 +23,19 @@ class Register(private val context: Context) {
 
         if (validateForm(user)) {
 
-            firebaseAuth.signInWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
+            firebaseAuth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
 
                 if (task.isSuccessful) {
+
                     insertUserInFirestore(user)
+
                     Toast.makeText(context, "insert user", Toast.LENGTH_SHORT).show()
+
+                    toMainActivity()
+
                 } else {
-                    Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
+
+                    Toast.makeText(context, task.exception!!.message, Toast.LENGTH_LONG).show()
                 }
 
             }
@@ -40,7 +48,7 @@ class Register(private val context: Context) {
         firestore.collection(Constants.USERS).document(getCurrentUserId()).set(user).addOnCompleteListener { task ->
 
             if (task.isSuccessful) {
-
+                
             } else {
                 Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
             }
@@ -70,6 +78,10 @@ class Register(private val context: Context) {
 
     private fun getCurrentUserId(): String {
         return firebaseAuth.currentUser!!.uid
+    }
+
+    private fun toMainActivity() {
+        context.startActivity(Intent(context, MainActivity::class.java))
     }
 
 }
