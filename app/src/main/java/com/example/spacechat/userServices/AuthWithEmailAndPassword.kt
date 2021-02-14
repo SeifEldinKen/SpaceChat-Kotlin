@@ -9,7 +9,7 @@ import com.example.spacechat.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class Register(private val context: Context) {
+class AuthWithEmailAndPassword(private val context: Context): Authentication {
 
     private val firebaseAuth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
@@ -19,43 +19,51 @@ class Register(private val context: Context) {
         FirebaseFirestore.getInstance()
     }
 
-    fun createUser(user: UserModel) {
 
-        if (validateForm(user)) {
+    override fun createUser(user: UserModel) {
+        if (verifyData(user)) {
 
             firebaseAuth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
-
                 if (task.isSuccessful) {
 
                     insertUserInFirestore(user)
-
-                    Toast.makeText(context, "insert user", Toast.LENGTH_SHORT).show()
-
                     toMainActivity()
 
                 } else {
-
-                    Toast.makeText(context, task.exception!!.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                 }
-
             }
 
         }
-
     }
 
-    private fun insertUserInFirestore(user: UserModel) {
-        firestore.collection(Constants.USERS).document(getCurrentUserId()).set(user).addOnCompleteListener { task ->
+    override fun insertUserInFirestore(user: UserModel) {
+
+        user.userId = firebaseAuth.currentUser!!.uid
+
+        firestore.collection(Constants.USERS).document(firebaseAuth.currentUser!!.uid).set(user).addOnCompleteListener { task ->
 
             if (task.isSuccessful) {
-                
+                Toast.makeText(context, "you have been added", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, task.exception!!.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun validateForm(user: UserModel): Boolean {
+    override fun login(user: UserModel) {
+        if (verifyData(user)) {
+            firebaseAuth.signInWithEmailAndPassword(user.email, user.password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    toMainActivity()
+                } else {
+                    Toast.makeText(context, task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    override fun verifyData(user: UserModel): Boolean {
         return when {
             user.username.isEmpty() -> problemRegisteringNewUserFrom("Please enter username")
 
@@ -76,12 +84,7 @@ class Register(private val context: Context) {
         return false
     }
 
-    private fun getCurrentUserId(): String {
-        return firebaseAuth.currentUser!!.uid
-    }
-
     private fun toMainActivity() {
         context.startActivity(Intent(context, MainActivity::class.java))
     }
-
 }
